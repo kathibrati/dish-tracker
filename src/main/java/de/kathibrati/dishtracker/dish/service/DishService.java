@@ -1,6 +1,8 @@
 package de.kathibrati.dishtracker.dish.service;
 
 import de.kathibrati.dishtracker.dish.model.entity.Dish;
+import de.kathibrati.dishtracker.dish.mapping.DishMapper;
+import de.kathibrati.dishtracker.dish.model.resource.DishResource;
 import de.kathibrati.dishtracker.dish.repository.DishRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,20 @@ public class DishService {
         this.dishRepository = dishRepository;
     }
 
-
-    public Dish createDish(Dish dish) {
-        return dishRepository.save(dish);
+    public List<DishResource> getAllDishes() {
+        return dishRepository.findAll()
+                .stream()
+                .map(DishMapper::toDishResource)
+                .toList();
     }
 
-    public List<Dish> getAllDishes() {
-        return dishRepository.findAll();
+    public Optional<DishResource> getDishById(Long id) {
+        return dishRepository.findById(id).map(DishMapper::toDishResource);
     }
 
-    public Optional<Dish> getDishById(Long id) {
-        return dishRepository.findById(id);
+    public DishResource createDish(Dish dish) {
+        Dish savedDish = dishRepository.save(dish);
+        return DishMapper.toDishResource(savedDish);
     }
 
     public void deleteDish(Long id) {

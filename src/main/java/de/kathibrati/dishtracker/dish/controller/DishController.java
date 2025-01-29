@@ -2,13 +2,12 @@ package de.kathibrati.dishtracker.dish.controller;
 
 
 import de.kathibrati.dishtracker.dish.model.entity.Dish;
+import de.kathibrati.dishtracker.dish.model.resource.DishResource;
 import de.kathibrati.dishtracker.dish.service.DishService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/dishes")
 public class DishController {
@@ -19,20 +18,21 @@ public class DishController {
         this.dishService = dishService;
     }
 
-    @PostMapping
-    public ResponseEntity<Dish> createDish(@RequestBody Dish dish) {
-        return ResponseEntity.ok(dishService.createDish(dish));
-    }
-
     @GetMapping
-    public ResponseEntity<List<Dish>> getAllDishes() {
+    public ResponseEntity<List<DishResource>> getAllDishes() {
         return ResponseEntity.ok(dishService.getAllDishes());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Dish> getDishById(@PathVariable Long id) {
-        Optional<Dish> dish = dishService.getDishById(id);
-        return dish.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<DishResource> getDishById(@PathVariable Long id) {
+        return dishService.getDishById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<DishResource> createDish(@RequestBody Dish dish) {
+        return ResponseEntity.ok(dishService.createDish(dish));
     }
 
     @DeleteMapping("/{id}")
